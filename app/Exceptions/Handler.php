@@ -56,6 +56,18 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+
+        if (config('app.debug'))
+        {
+            $whoops = new \Whoops\Run;
+            $whoops->pushHandler(new \Whoops\Hander\PrettyPageHander());
+
+            return new \Illuminate\Http\Response(
+                $whoops->handleException($e),
+                $e->getStatusCode(),
+                $e->getHeaders()
+            );
+        }
         // CSRFトークンが存在しない、トークン不一致時に投げられる。
         // TokenMismatchException例外を403で処理。
         // もちろん適切であれば、HTTPステータスは自由に設定できる。
